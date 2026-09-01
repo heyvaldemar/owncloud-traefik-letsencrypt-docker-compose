@@ -1,3 +1,16 @@
+# Image pins live HERE, as interpolation defaults, so `git pull` (or
+# re-downloading this file) delivers the exact version combination this
+# repository has tested — no .env editing required. Setting the matching
+# variable in .env overrides the default for anyone who wants to pin
+# differently; .env itself carries only secrets and deliberate overrides.
+# CI (Trivy scans, check-pin-freshness, the ephemeral test .env) reads
+# the pins from these lines — this block is the single source of truth.
+x-images:
+  traefik: &traefik-image ${TRAEFIK_IMAGE_TAG:-traefik:3.7@sha256:9c2a54d87f76f5c2f5f2682c68394af92fb12c0a2686798d6462a3f84bd78eaf}
+  mariadb: &mariadb-image ${OWNCLOUD_MARIADB_IMAGE_TAG:-mariadb:11.4@sha256:611a2fcc5fa7c6ceb8644c6f74b25ede004ff6c3a6b38c8f8c23d3bbf6c26430}
+  redis: &redis-image ${OWNCLOUD_REDIS_IMAGE_TAG:-redis:7.4@sha256:71da9275c5f3fcb97d0fa0c8c5b36cc995327265420f17a04bfd544f458059f7}
+  owncloud: &owncloud-image ${OWNCLOUD_IMAGE_TAG:-owncloud/server:11.0.0@sha256:667c772de235e23f49f064eddefaaab2bc1c18beeea8506c1ad24f4a3a931738}
+
 networks:
   owncloud-network:
     external: true
@@ -15,14 +28,14 @@ volumes:
 
 services:
   mariadb:
-    image: ${OWNCLOUD_MARIADB_IMAGE_TAG}
+    image: *mariadb-image
     volumes:
       - mariadb-data:/var/lib/mysql
     environment:
-      MARIADB_DATABASE: ${OWNCLOUD_DB_NAME}
-      MARIADB_USER: ${OWNCLOUD_DB_USER}
-      MARIADB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-      MARIADB_ROOT_PASSWORD: ${OWNCLOUD_DB_ADMIN_PASSWORD}
+      MARIADB_DATABASE: ${OWNCLOUD_DB_NAME:-ownclouddb}
+      MARIADB_USER: ${OWNCLOUD_DB_USER:-ownclouddbbuser}
+      MARIADB_PASSWORD: ${OWNCLOUD_DB_PASSWORD:?set in .env - see .env.example for generation command}
+      MARIADB_ROOT_PASSWORD: ${OWNCLOUD_DB_ADMIN_PASSWORD:?set in .env - see .env.example for generation command}
     networks:
       - owncloud-network
     healthcheck:
@@ -34,7 +47,7 @@ services:
     restart: unless-stopped
 
   redis:
-    image: ${OWNCLOUD_REDIS_IMAGE_TAG}
+    image: *redis-image
     command: ["--databases", "1"]
     volumes:
       - redis-data:/data
@@ -49,19 +62,19 @@ services:
     restart: unless-stopped
 
   owncloud:
-    image: ${OWNCLOUD_IMAGE_TAG}
+    image: *owncloud-image
     volumes:
-      - owncloud-data:${DATA_PATH}
+      - owncloud-data:${DATA_PATH:-/mnt/data}
     environment:
-      OWNCLOUD_DOMAIN: ${OWNCLOUD_HOSTNAME}
+      OWNCLOUD_DOMAIN: ${OWNCLOUD_HOSTNAME:?set in .env - see .env.example}
       OWNCLOUD_TRUSTED_DOMAINS: ${OWNCLOUD_HOSTNAME}
       OWNCLOUD_DB_TYPE: mysql
       OWNCLOUD_DB_HOST: mariadb
-      OWNCLOUD_DB_NAME: ${OWNCLOUD_DB_NAME}
-      OWNCLOUD_DB_USERNAME: ${OWNCLOUD_DB_USER}
+      OWNCLOUD_DB_NAME: ${OWNCLOUD_DB_NAME:-ownclouddb}
+      OWNCLOUD_DB_USERNAME: ${OWNCLOUD_DB_USER:-ownclouddbbuser}
       OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-      OWNCLOUD_ADMIN_USERNAME: ${OWNCLOUD_ADMIN_USERNAME}
-      OWNCLOUD_ADMIN_PASSWORD: ${OWNCLOUD_ADMIN_PASSWORD}
+      OWNCLOUD_ADMIN_USERNAME: ${OWNCLOUD_ADMIN_USERNAME:-owncloudadmin}
+      OWNCLOUD_ADMIN_PASSWORD: ${OWNCLOUD_ADMIN_PASSWORD:?set in .env - see .env.example for generation command}
       OWNCLOUD_MYSQL_UTF8MB4: 'true'
       OWNCLOUD_REDIS_ENABLED: 'true'
       OWNCLOUD_REDIS_HOST: redis
@@ -107,10 +120,10 @@ services:
         condition: service_healthy
 
   traefik:
-    image: ${TRAEFIK_IMAGE_TAG}
+    image: *traefik-image
     command:
       # Set the log level (DEBUG, INFO, WARN, ERROR)
-      - "--log.level=${TRAEFIK_LOG_LEVEL}"
+      - "--log.level=${TRAEFIK_LOG_LEVEL:-WARN}"
       # Enable the built-in API and web-based dashboard
       - "--api.dashboard=true"
       # Enable the /ping endpoint so we can health-check Traefik
@@ -135,7 +148,7 @@ services:
       # Use ACME (Let's Encrypt) to generate/renew certificates via TLS challenge
       - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
       # The email address used by Let's Encrypt for renewal notices
-      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.email=${TRAEFIK_ACME_EMAIL:?set in .env - see .env.example}"
       # The file where ACME certificates are stored inside the container
       - "--certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/acme.json"
       # Enable Prometheus metrics
@@ -164,14 +177,14 @@ services:
       # Enable Traefik for this container
       - "traefik.enable=true"
       # A router to expose the Traefik dashboard
-      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_HOSTNAME}`)"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_HOSTNAME:?set in .env - see .env.example}`)"
       - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.routers.dashboard.tls=true"
       - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.dashboard.service=api@internal"
       # Basic Authentication for the Traefik dashboard
       - "traefik.http.routers.dashboard.middlewares=authtraefik"
-      - "traefik.http.middlewares.authtraefik.basicauth.users=${TRAEFIK_BASIC_AUTH}"
+      - "traefik.http.middlewares.authtraefik.basicauth.users=${TRAEFIK_BASIC_AUTH:?set in .env - see .env.example for htpasswd generation}"
       # Specify the internal server port to the dashboard service
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
       # Pass the original Host header to the backend
@@ -179,33 +192,33 @@ services:
     restart: unless-stopped
 
   backups:
-    image: ${OWNCLOUD_MARIADB_IMAGE_TAG}
+    image: *mariadb-image
     command: >-
-      sh -c 'sleep $BACKUP_INIT_SLEEP &&
+      sh -c 'sleep $$BACKUP_INIT_SLEEP &&
       while true; do
-        mariadb-dump -h mariadb -u $OWNCLOUD_DB_USER -p"$OWNCLOUD_DB_PASSWORD" $OWNCLOUD_DB_NAME | gzip > "$MARIADB_BACKUPS_PATH/$MARIADB_BACKUP_NAME-$(date '+%Y-%m-%d_%H-%M').gz" &&
-        tar -zcpf $DATA_BACKUPS_PATH/$DATA_BACKUP_NAME-$(date "+%Y-%m-%d_%H-%M").tar.gz $DATA_PATH &&
-        find $MARIADB_BACKUPS_PATH -type f -mtime +$MARIADB_BACKUP_PRUNE_DAYS | xargs rm -f &&
-        find $DATA_BACKUPS_PATH -type f -mtime +$DATA_BACKUP_PRUNE_DAYS | xargs rm -f;
-        sleep $BACKUP_INTERVAL; done'
+        mariadb-dump -h mariadb -u $$OWNCLOUD_DB_USER -p"$$OWNCLOUD_DB_PASSWORD" $$OWNCLOUD_DB_NAME | gzip > "$$MARIADB_BACKUPS_PATH/$$MARIADB_BACKUP_NAME-$$(date '+%Y-%m-%d_%H-%M').gz" &&
+        tar -zcpf $$DATA_BACKUPS_PATH/$$DATA_BACKUP_NAME-$$(date "+%Y-%m-%d_%H-%M").tar.gz $$DATA_PATH &&
+        find $$MARIADB_BACKUPS_PATH -type f -mtime +$$MARIADB_BACKUP_PRUNE_DAYS | xargs rm -f &&
+        find $$DATA_BACKUPS_PATH -type f -mtime +$$DATA_BACKUP_PRUNE_DAYS | xargs rm -f;
+        sleep $$BACKUP_INTERVAL; done'
     volumes:
       - owncloud-mariadb-backup:/var/lib/mysql
-      - owncloud-data:${DATA_PATH}
-      - owncloud-data-backups:${DATA_BACKUPS_PATH}
-      - owncloud-database-backups:${MARIADB_BACKUPS_PATH}
+      - owncloud-data:${DATA_PATH:-/mnt/data}
+      - owncloud-data-backups:${DATA_BACKUPS_PATH:-/srv/owncloud-application-data/backups}
+      - owncloud-database-backups:${MARIADB_BACKUPS_PATH:-/srv/owncloud-mariadb/backups}
     environment:
-      OWNCLOUD_DB_NAME: ${OWNCLOUD_DB_NAME}
-      OWNCLOUD_DB_USER: ${OWNCLOUD_DB_USER}
+      OWNCLOUD_DB_NAME: ${OWNCLOUD_DB_NAME:-ownclouddb}
+      OWNCLOUD_DB_USER: ${OWNCLOUD_DB_USER:-ownclouddbbuser}
       OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-      BACKUP_INIT_SLEEP: ${BACKUP_INIT_SLEEP}
-      BACKUP_INTERVAL: ${BACKUP_INTERVAL}
-      MARIADB_BACKUP_PRUNE_DAYS: ${MARIADB_BACKUP_PRUNE_DAYS}
-      DATA_BACKUP_PRUNE_DAYS: ${DATA_BACKUP_PRUNE_DAYS}
-      MARIADB_BACKUPS_PATH: ${MARIADB_BACKUPS_PATH}
-      DATA_BACKUPS_PATH: ${DATA_BACKUPS_PATH}
-      DATA_PATH: ${DATA_PATH}
-      MARIADB_BACKUP_NAME: ${MARIADB_BACKUP_NAME}
-      DATA_BACKUP_NAME: ${DATA_BACKUP_NAME}
+      BACKUP_INIT_SLEEP: ${BACKUP_INIT_SLEEP:-30m}
+      BACKUP_INTERVAL: ${BACKUP_INTERVAL:-24h}
+      MARIADB_BACKUP_PRUNE_DAYS: ${MARIADB_BACKUP_PRUNE_DAYS:-7}
+      DATA_BACKUP_PRUNE_DAYS: ${DATA_BACKUP_PRUNE_DAYS:-7}
+      MARIADB_BACKUPS_PATH: ${MARIADB_BACKUPS_PATH:-/srv/owncloud-mariadb/backups}
+      DATA_BACKUPS_PATH: ${DATA_BACKUPS_PATH:-/srv/owncloud-application-data/backups}
+      DATA_PATH: ${DATA_PATH:-/mnt/data}
+      MARIADB_BACKUP_NAME: ${MARIADB_BACKUP_NAME:-owncloud-mariadb-backup}
+      DATA_BACKUP_NAME: ${DATA_BACKUP_NAME:-owncloud-application-data-backup}
     networks:
       - owncloud-network
     restart: unless-stopped
