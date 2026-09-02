@@ -29,6 +29,16 @@ volumes:
 services:
   mariadb:
     image: *mariadb-image
+    # Resource limits as .env-overridable defaults (e.g. OWNCLOUD_MARIADB_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${OWNCLOUD_MARIADB_MEMORY_LIMIT:-1g}
+          cpus: "${OWNCLOUD_MARIADB_CPU_LIMIT:-1.0}"
+        reservations:
+          memory: ${OWNCLOUD_MARIADB_MEMORY_RESERVATION:-128m}
+          cpus: "${OWNCLOUD_MARIADB_CPU_RESERVATION:-0.25}"
     volumes:
       - mariadb-data:/var/lib/mysql
     environment:
@@ -48,6 +58,16 @@ services:
 
   redis:
     image: *redis-image
+    # Resource limits as .env-overridable defaults (e.g. OWNCLOUD_REDIS_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${OWNCLOUD_REDIS_MEMORY_LIMIT:-256m}
+          cpus: "${OWNCLOUD_REDIS_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${OWNCLOUD_REDIS_MEMORY_RESERVATION:-32m}
+          cpus: "${OWNCLOUD_REDIS_CPU_RESERVATION:-0.1}"
     command: ["--databases", "1"]
     volumes:
       - redis-data:/data
@@ -63,6 +83,16 @@ services:
 
   owncloud:
     image: *owncloud-image
+    # Resource limits as .env-overridable defaults (e.g. OWNCLOUD_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${OWNCLOUD_MEMORY_LIMIT:-1g}
+          cpus: "${OWNCLOUD_CPU_LIMIT:-1.0}"
+        reservations:
+          memory: ${OWNCLOUD_MEMORY_RESERVATION:-128m}
+          cpus: "${OWNCLOUD_CPU_RESERVATION:-0.25}"
     volumes:
       - owncloud-data:${DATA_PATH:-/mnt/data}
     environment:
@@ -121,6 +151,16 @@ services:
 
   traefik:
     image: *traefik-image
+    # Resource limits as .env-overridable defaults (e.g. TRAEFIK_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${TRAEFIK_MEMORY_LIMIT:-256m}
+          cpus: "${TRAEFIK_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${TRAEFIK_MEMORY_RESERVATION:-64m}
+          cpus: "${TRAEFIK_CPU_RESERVATION:-0.1}"
     command:
       # Set the log level (DEBUG, INFO, WARN, ERROR)
       - "--log.level=${TRAEFIK_LOG_LEVEL:-WARN}"
@@ -193,6 +233,16 @@ services:
 
   backups:
     image: *mariadb-image
+    # Resource limits as .env-overridable defaults (e.g. OWNCLOUD_BACKUPS_MEMORY_LIMIT=2g);
+    # the override survives every git pull.
+    deploy:
+      resources:
+        limits:
+          memory: ${OWNCLOUD_BACKUPS_MEMORY_LIMIT:-256m}
+          cpus: "${OWNCLOUD_BACKUPS_CPU_LIMIT:-0.5}"
+        reservations:
+          memory: ${OWNCLOUD_BACKUPS_MEMORY_RESERVATION:-32m}
+          cpus: "${OWNCLOUD_BACKUPS_CPU_RESERVATION:-0.1}"
     command: >-
       bash -c 'set -o pipefail;
       sleep "$$BACKUP_INIT_SLEEP";
