@@ -86,7 +86,7 @@ _(no unreleased changes yet)_
   required-variable guard fires, a backup is produced, it is a readable
   archive with real dump content (and a readable data `tar.gz` where the
   stack has one), a database outage is reported as `FAILED`, **restore
-  genuinely replaces database state** (a marker row inserted after the
+ replaces database state** (a marker row inserted after the
   baseline backup is gone after restoring it), and pruning removes only
   old files.
 
@@ -121,7 +121,7 @@ v1.2.0.
   released 2026-07-30). ❗ Existing 10.15 deployments should step through
   the latest 10.16 first via an `OWNCLOUD_IMAGE_TAG` override, see the
   release notes.
-- **MariaDB 11.1 (EOL short-term line) → 11.4 LTS**, **Redis 7.2 → 7.4**,
+- **MariaDB 11.1 (EOL short-term line) → 11.4 LTS**, Redis 7.2 → 7.4,
   **Traefik 3.2 → 3.7** (3.2's Docker client cannot talk to Docker
   Engine 29).
 - **All images pinned by `tag@sha256:digest`** in the compose `x-images`
