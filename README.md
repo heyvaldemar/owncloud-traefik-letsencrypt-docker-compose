@@ -1,4 +1,4 @@
-# ownCloud + Traefik + Let's Encrypt — Docker Compose
+# ownCloud + Traefik + Let's Encrypt on Docker Compose
 
 [![Deployment Verification](https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -42,20 +42,20 @@ curl -fsk "https://${OWNCLOUD_HOSTNAME}/status.php"   # {"installed":true,...}
 - **Cert issuance fails.** DNS hasn't propagated or port 80 isn't reachable from the internet.
 - **`docker compose up` fails with `set in .env`.** A required variable is empty; the error names it.
 - **Networks not found.** Step 2 was skipped.
-- **\"Trusted domain\" error.** Open the site via `OWNCLOUD_HOSTNAME` exactly as set in `.env` — other names aren't trusted.
+- **\"Trusted domain\" error.** Open the site via `OWNCLOUD_HOSTNAME` exactly as set in `.env`: other names aren't trusted.
 
 ## Supply chain trust
 
-Four images — [`traefik`](https://hub.docker.com/_/traefik), [`owncloud/server`](https://hub.docker.com/r/owncloud/server), [`mariadb`](https://hub.docker.com/_/mariadb), [`redis`](https://hub.docker.com/_/redis) — pinned to `tag@sha256:<digest>` as interpolation defaults in the compose `x-images` block. `git pull` alone delivers the tested combination; an `*_IMAGE_TAG` variable in `.env` overrides deliberately.
+Four images ([`traefik`](https://hub.docker.com/_/traefik), [`owncloud/server`](https://hub.docker.com/r/owncloud/server), [`mariadb`](https://hub.docker.com/_/mariadb), [`redis`](https://hub.docker.com/_/redis)) pinned to `tag@sha256:<digest>` as interpolation defaults in the compose `x-images` block. `git pull` alone delivers the tested combination; an `*_IMAGE_TAG` variable in `.env` overrides deliberately.
 
 The daily `check-pin-freshness` CI job re-resolves each pin against its registry and compares the pinned ownCloud and Traefik versions against the latest upstream releases. GitHub Actions are pinned by commit SHA; Dependabot keeps those fresh.
 
 ## Production checklist
 
-- [ ] **Strong secrets** — three generated passwords at 24+ random characters; regenerate the Traefik dashboard hash.
+- [ ] **Strong secrets**: three generated passwords at 24+ random characters; regenerate the Traefik dashboard hash.
 - [ ] **Host-mount the backup volumes** for disaster recovery.
 - [ ] **Verify Let's Encrypt cert issuance** in the Traefik logs on first start.
-- [ ] **Upgrade one step at a time** — from 10.15, go through the latest 10.16 before 11; back up before each step.
+- [ ] **Upgrade one step at a time**: from 10.15, go through the latest 10.16 before 11; back up before each step.
 
 ## Backups and restore
 
@@ -63,7 +63,7 @@ The `backups` container runs a `mariadb-dump | gzip` + `tar.gz`-of-data → prun
 
 ## Resource limits
 
-Every service carries memory and CPU limits plus reservations as compose-level defaults — the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> --format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
+Every service carries memory and CPU limits plus reservations as compose-level defaults, the same values CI boots the stack under. Override any of them in `.env` (the knobs and their defaults are listed in `.env.example`, e.g. `TRAEFIK_MEMORY_LIMIT=512m`) and the override survives every `git pull`. If a service is OOM-killed under real load, `docker inspect <container> --format '{{.State.OOMKilled}}'` says so; raise its `_MEMORY_LIMIT` and recreate.
 
 ## Container hardening
 
@@ -75,14 +75,14 @@ The [Deployment Verification](https://github.com/heyvaldemar/owncloud-traefik-le
 
 ### Backup and restore, proven
 
-`tests/e2e-backup-restore.sh` runs against the live stack and is what CI executes after the HTTPS smoke. The scenario that matters most is the restore roundtrip: insert a marker row, restore the earliest backup, assert the marker is gone — a backup that cannot be restored fails the build. Run it yourself against a running deployment with short intervals in `.env` (`BACKUP_INIT_SLEEP=15s`, `BACKUP_INTERVAL=60s`):
+`tests/e2e-backup-restore.sh` runs against the live stack and is what CI executes after the HTTPS smoke. The scenario that matters most is the restore roundtrip: insert a marker row, restore the earliest backup, assert the marker is gone. A backup that cannot be restored fails the build. Run it yourself against a running deployment with short intervals in `.env` (`BACKUP_INIT_SLEEP=15s`, `BACKUP_INTERVAL=60s`):
 
 ```bash
 chmod +x tests/e2e-backup-restore.sh
 ./tests/e2e-backup-restore.sh
 ```
 
-It stops the database container briefly to prove failure detection — run it on a staging copy, not on production.
+It stops the database container briefly to prove failure detection. Run it on a staging copy, not on production.
 
 ## Security Notes
 
@@ -96,7 +96,7 @@ It stops the database container briefly to prove failure detection — run it on
 
 <div align="center">
 
-**Maintained by [Vladimir Mikhalev](https://github.com/heyvaldemar)** — Docker Captain · IBM Champion · AWS Community Builder
+**Maintained by [Vladimir Mikhalev](https://github.com/heyvaldemar)** · Docker Captain · IBM Champion · AWS Community Builder
 
 [YouTube](https://www.youtube.com/channel/UCf85kQ0u1sYTTTyKVpxrlyQ?sub_confirmation=1) · [Blog](https://heyvaldemar.com) · [LinkedIn](https://www.linkedin.com/in/heyvaldemar/)
 

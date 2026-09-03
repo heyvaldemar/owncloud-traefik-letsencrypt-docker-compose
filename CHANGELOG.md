@@ -65,7 +65,7 @@ _(no unreleased changes yet)_
 
 ### Added
 
-- **`tests/e2e-backup-restore.sh`** — seven end-to-end scenarios against
+- **`tests/e2e-backup-restore.sh`**: seven end-to-end scenarios against
   the live stack, run by CI on every push and by you locally: the
   required-variable guard fires, a backup is produced, it is a readable
   archive with real dump content (and a readable data `tar.gz` where the
@@ -103,7 +103,7 @@ v1.2.0.
 
 - **ownCloud Server 10.15 → 11.0.0** (the current classic-server major,
   released 2026-07-30). ❗ Existing 10.15 deployments should step through
-  the latest 10.16 first via an `OWNCLOUD_IMAGE_TAG` override — see the
+  the latest 10.16 first via an `OWNCLOUD_IMAGE_TAG` override, see the
   release notes.
 - **MariaDB 11.1 (EOL short-term line) → 11.4 LTS**, **Redis 7.2 → 7.4**,
   **Traefik 3.2 → 3.7** (3.2's Docker client cannot talk to Docker
@@ -114,7 +114,7 @@ v1.2.0.
 ### Security
 
 - **Credentials untracked from git.** The tracked `.env` carried
-  generated-looking database and admin passwords — rotate them if
+  generated-looking database and admin passwords. Rotate them if
   reused.
 
 ### Fixed
