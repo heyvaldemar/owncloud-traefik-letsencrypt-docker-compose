@@ -44,6 +44,10 @@ curl -fsk "https://${OWNCLOUD_HOSTNAME}/status.php"   # {"installed":true,...}
 - **Networks not found.** Step 2 was skipped.
 - **\"Trusted domain\" error.** Open the site via `OWNCLOUD_HOSTNAME` exactly as set in `.env`: other names aren't trusted.
 
+## Updating
+
+`./update.sh` moves this checkout to the latest release tag — a combination this repository's CI has booted, upgraded from the previous release on the same volumes, and smoke-tested — and then runs `docker compose up -d`. It refuses to cross a major version unattended, refuses to run over local changes, and names any variable that became required since your version before anything has moved. `./update.sh --dry-run` says what would happen. Every release cut by fleet triage also carries what upstream changed, read from its release notes against this compose file.
+
 ## Supply chain trust
 
 Four images ([`traefik`](https://hub.docker.com/_/traefik), [`owncloud/server`](https://hub.docker.com/r/owncloud/server), [`mariadb`](https://hub.docker.com/_/mariadb), [`redis`](https://hub.docker.com/_/redis)) pinned to `tag@sha256:<digest>` as interpolation defaults in the compose `x-images` block. `git pull` alone delivers the tested combination; an `*_IMAGE_TAG` variable in `.env` overrides deliberately.
