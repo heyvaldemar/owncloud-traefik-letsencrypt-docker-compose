@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.8.9] - 2026-09-17
+
 ### Security
 
 - **`owncloud/server:11.0.0` was rebuilt upstream**; the pin moved from `sha256:f23ea0e4ca83…` to `sha256:da653be2cdbc…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
@@ -240,7 +244,8 @@ v1.2.0.
   deploy-and-test job that boots the stack and requires `status.php` to
   report `installed:true` through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.8.8...HEAD
+[Unreleased]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.8.9...HEAD
+[1.8.9]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.8.8...v1.8.9
 [1.8.8]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.8.7...v1.8.8
 [1.8.7]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.8.6...v1.8.7
 [1.8.6]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.8.5...v1.8.6
