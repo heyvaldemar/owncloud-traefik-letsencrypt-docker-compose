@@ -1,6 +1,7 @@
 # ownCloud + Traefik + Let's Encrypt on Docker Compose
 
 [![Deployment Verification](https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml/badge.svg?branch=main)](https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/actions/workflows/deployment-verification.yml)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/14871/badge)](https://www.bestpractices.dev/projects/14871)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository deploys ownCloud Server (classic PHP server, 11.x) behind Traefik with automatic Let's Encrypt TLS, backed by MariaDB 11.4 LTS and Redis, with an unattended first-start installation (admin account from `.env`), scheduled backups (database + data) and companion restore scripts.
