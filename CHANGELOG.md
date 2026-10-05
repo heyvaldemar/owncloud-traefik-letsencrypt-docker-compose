@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`update.sh` stops on a `.env` it cannot read, before the checkout.** It used to fall through: every new required variable read as "not set", or, with none, the tree moved to the new tag and `docker compose up` failed on the permission. Now it names the file, its owner and mode, and changes nothing.
+
 ### Security
 
 - **`owncloud/server:11.0.1` was rebuilt upstream**; the pin moved from `sha256:1e37da2511b9…` to `sha256:cf7bd2d8ae2f…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
