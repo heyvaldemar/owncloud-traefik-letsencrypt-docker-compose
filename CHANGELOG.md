@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`mariadb:11.4` was rebuilt upstream**; the pin moved from `sha256:1292844148b3…` to `sha256:250e1609e93c…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`owncloud/server:11.0.1` was rebuilt upstream**; the pin moved from `sha256:9af2ccba6651…` to `sha256:f5bda84b9e76…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [1.9.11] - 2026-10-16
 
