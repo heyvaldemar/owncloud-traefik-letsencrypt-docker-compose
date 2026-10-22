@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`traefik:3.7` was rebuilt upstream**; the pin moved from `sha256:6d3e069ee484…` to `sha256:22a759fb803a…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
+- **`owncloud/server:11.0.1` was rebuilt upstream**; the pin moved from `sha256:b4757b43b3a3…` to `sha256:bacdc811aa79…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [1.9.17] - 2026-10-22
 
