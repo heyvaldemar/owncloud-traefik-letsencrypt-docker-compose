@@ -9,7 +9,7 @@ x-images:
   traefik: &traefik-image ${TRAEFIK_IMAGE_TAG:-traefik:${TRAEFIK_IMAGE_VERSION:-3.7@sha256:1336e85aaed293bd63d005086e0dd013b04078b26aaeb1c18b26a2f928af7e65}}
   mariadb: &mariadb-image ${OWNCLOUD_MARIADB_IMAGE_TAG:-mariadb:${OWNCLOUD_MARIADB_IMAGE_VERSION:-11.4@sha256:d1891ede5a559f1086f55053bb8cc1569b0298338c4d72d71725a7f74f6ba620}}
   redis: &redis-image ${OWNCLOUD_REDIS_IMAGE_TAG:-redis:${OWNCLOUD_REDIS_IMAGE_VERSION:-7.4@sha256:bd28fff4b665fdf1b73e8b5b73ec05d2f858f4fa3c8ea0d7c9bc09f7f6bf7039}}
-  owncloud: &owncloud-image ${OWNCLOUD_IMAGE_TAG:-owncloud/server:${OWNCLOUD_IMAGE_VERSION:-11.0.1@sha256:052245d09866bdec750936c1988b4afe7954e93f3afdaedc74aa15c45eff837c}}
+  owncloud: &owncloud-image ${OWNCLOUD_IMAGE_TAG:-owncloud/server:${OWNCLOUD_IMAGE_VERSION:-11.0.1@sha256:295fe598ccf3c0089e71f17d82df94db87245cf22ab2f25bb71ac5607305bf37}}
 
 networks:
   owncloud-network:
