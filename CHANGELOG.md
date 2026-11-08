@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.9.38] - 2026-11-08
+
 ### Security
 
 - **The database password is no longer on any command line.** The backup loop ran `mariadb-dump -p"…"`, and `owncloud-restore-database.sh` handed the password to `docker exec -e MYSQL_PWD=…`. Both put the value in a process's arguments, and every user on the host reads those with `ps`: `/proc/<pid>/cmdline` is world-readable, and the host sees every container's processes. The client overwrites its copy once it has parsed it, but only after it was readable, and the overwrite leaves the password's length on show as a row of `x`. Now the client reads `MYSQL_PWD` from its environment, set inside the container, and the password never leaves the backups container. Verified on the pinned `mariadb:11.4`: it reads the variable (a wrong value is refused with 1045) and prints no warning. CI proves it on every run: one backup is held open by a table lock while every command line on the runner and in the backups container is read, and a sampler reads every command line on the runner for the whole suite. Neither may contain the password, compared through a file so the value is never printed.
@@ -556,7 +560,8 @@ v1.2.0.
   deploy-and-test job that boots the stack and requires `status.php` to
   report `installed:true` through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.37...HEAD
+[Unreleased]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.38...HEAD
+[1.9.38]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.37...v1.9.38
 [1.9.37]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.36...v1.9.37
 [1.9.36]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.35...v1.9.36
 [1.9.35]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.34...v1.9.35
