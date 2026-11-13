@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_(no unreleased changes yet)_
+
+## [1.9.40] - 2026-11-13
+
 ### Security
 
 - **`mariadb:11.4` was rebuilt upstream**; the pin moved from `sha256:d1891ede5a55…` to `sha256:5e73baf8179b…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
@@ -572,7 +576,8 @@ v1.2.0.
   deploy-and-test job that boots the stack and requires `status.php` to
   report `installed:true` through Traefik.
 
-[Unreleased]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.39...HEAD
+[Unreleased]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.40...HEAD
+[1.9.40]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.39...v1.9.40
 [1.9.39]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.38...v1.9.39
 [1.9.38]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.37...v1.9.38
 [1.9.37]: https://github.com/heyvaldemar/owncloud-traefik-letsencrypt-docker-compose/compare/v1.9.36...v1.9.37
