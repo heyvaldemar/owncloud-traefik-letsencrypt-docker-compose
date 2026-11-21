@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_(no unreleased changes yet)_
+### Security
+
+- **`owncloud/server:11.1.0` was rebuilt upstream**; the pin moved from `sha256:208b0a99ecbf…` to `sha256:b1d8eb3ee170…`. Same version, same tag, a rebuilt base image — the usual shape of a security fix in a base layer.
 
 ## [1.9.42] - 2026-11-21
 
